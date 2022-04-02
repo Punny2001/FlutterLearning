@@ -19,9 +19,19 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
 
-  var question = [
-    'What\'s your favorite color?',
-    'What\'s your favorite animal?',
+  var questions = [
+    {
+      'questionText': 'What\'s your favorite color?',
+      'answers': ['Black', 'Blue', 'Pink', 'Red'],
+    },
+    {
+      'questionText': 'What\'s your favorite animal?',
+      'answers': ['Dog', 'Cat', 'Bird', 'Fish'],
+    },
+    {
+      'questionText': 'What\'s your favorite mobile hone?',
+      'answers': ['iPhone', 'Samsung', 'Huawei', 'Oppo'],
+    },
   ];
 
   void _answerQuestion() {
@@ -38,15 +48,18 @@ class _MyAppState extends State<MyApp> {
         // Scaffold is to generate automatically page
         appBar: AppBar(
           title: Text('My first app'),
+          centerTitle: true,
         ),
         body: Column(
           children: [
             Question(
-              question[_questionIndex],
+              questions[_questionIndex]['questionText'] as String,
             ),
-            Answer(_answerQuestion, 1),
-            Answer(_answerQuestion, 2),
-            Answer(_answerQuestion, 3),
+            ...(questions[_questionIndex]['answers'] as List<
+                    String>) // ... makes separating list into a value of a list, then take it into child list.
+                .map((answer) {
+              return Answer(_answerQuestion, answer);
+            }).toList()
           ],
         ),
       ),
