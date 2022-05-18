@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -18,29 +18,54 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
+
     setState(() {
       _questionIndex += 1;
     });
     print('Index: $_questionIndex');
-    if (_questionIndex < questions.length) {
-      print('We have more question'); 
+    if (_questionIndex < _questions.length) {
+      print('We have more question');
     }
   }
 
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'What\'s your favorite color?',
-      'answers': ['Black', 'Blue', 'Pink', 'Red'],
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Blue', 'score': 3},
+        {'text': 'Pink', 'score': 8},
+        {'text': 'Red', 'score': 5}
+      ],
     },
     {
       'questionText': 'What\'s your favorite animal?',
-      'answers': ['Dog', 'Cat', 'Bird', 'Fish'],
+      'answers': [
+        {'text': 'Dog', 'score': 10},
+        {'text': 'Cat', 'score': 7},
+        {'text': 'Bird', 'score': 5},
+        {'text': 'Fish', 'score': 1}
+      ],
     },
     {
       'questionText': 'What\'s your favorite mobile hone?',
-      'answers': ['iPhone', 'Samsung', 'Huawei', 'Oppo'],
+      'answers': [
+        {'text': 'iPhone', 'score': 8},
+        {'text': 'Samsung', 'score': 5},
+        {'text': 'Huawei', 'score': 4},
+        {'text': 'Oppo', 'score': 2}
+      ],
     },
   ];
 
@@ -53,21 +78,13 @@ class _MyAppState extends State<MyApp> {
           title: Text('My first app'),
           centerTitle: true,
         ),
-        body: _questionIndex < questions.length ? Column(
-          children: [
-            Question(
-              questions[_questionIndex]['questionText'] as String,
-            ),
-            ...(questions[_questionIndex]['answers'] as List<
-                    String>) // ... makes separating list into a value of a list, then take it into child list.
-                .map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList()
-          ],
-        )
-        : Center(
-          child: Text('You did it!'),
-        )
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
